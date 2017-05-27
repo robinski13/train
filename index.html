@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="UTF-8">
+  <title>Train</title>
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <!-- LINK TO FIREBASE GOES HERE -->
+  <script src="https://www.gstatic.com/firebasejs/4.0.0/firebase.js"></script>
+</head>
+<body>
+  <div class="container">
+    <br>
+    <!-- Jumbotron -->
+    <div class="jumbotron">
+      <h1 class="text-center">Any Time is Train Time</h1>
+    </div>
+    <div class="row">
+      <!-- Sign-Up Panel-->
+      <div class="col-lg-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="add-train">Add Train</h3>
+          </div>
+          <div class="panel-body">
+            <!-- Sign-up Form (note the various input "types")-->
+            <form role="form">
+              <div class="form-group">
+                <label for="name-input">Your Name</label>
+                <input class="form-control" id="name-input" type="text">
+              </div>
+              <div class="form-group">
+                <label for="destination-input">Destination</label>
+                <input class="form-control" id="destination-input" type="text">
+              </div>
+              <div class="form-group">
+                <label for="time-input">Firt Train Time (HH:mm - military time)</label>
+                <input class="form-control" id="time-input" type="text">
+              </div>
+              <div class="form-group">
+                <label for="frequency-input">Frequentcy (min)</label>
+                <input class="form-control" id="frequency-input" type="text"> 
+              </div>
+              <button class="btn btn-default" id="add-user" type="submit">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- Most Recent Member Panel -->
+      <div class="col-lg-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">members</h3>
+          </div>
+          <div class="panel-body" id="members">
+            <h2 id="name-display"></h2>
+            <h4 id="destination-display"></h4>
+            <h4 id="time-display"></h4>
+            <p id="frequency-display"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wells for displaying all users -->
+        <div class="col-lg-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">All Members</h3>
+            </div>
+            <div class="panel-body">
+                <div id="full-train-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery.js"></script>
+  <!-- Script -->
+  <script>
+    // ========================================== START CODING BELOW!!
+    // Initialize Firebase
+    var config = {
+    apiKey: "AIzaSyDhxgFZeq-a_luFhoFa27i_8js4w087wXE",
+    authDomain: "train-362b6.firebaseapp.com",
+    databaseURL: "https://train-362b6.firebaseio.com",
+    projectId: "train-362b6",
+    storageBucket: "train-362b6.appspot.com",
+    messagingSenderId: "785344163407"
+  };
+  firebase.initializeApp(config);
+    // Create a variable to reference the database.
+    var database = firebase.database();
+    // Initial Values
+    var name = "";
+    var destination = "";
+    var time = 0;
+    var frequency = "";
+    // Capture Button Click
+    $("#add-user").on("click", function(event) {
+      event.preventDefault();
+      // Grabbed values from text boxes
+      name = $("#name-input").val().trim();
+      destination = $("#destination-input").val().trim();
+      time = $("#time-input").val().trim();
+      frequency = $("#frequency-input").val().trim();
+      // Code for handling the push
+      database.ref().push({
+        name: name,
+        destination: destination,
+        time: time,
+        frequency: frequency
+      });
+    });
+    // Firebase watcher + initial loader HINT: .on("value")
+    database.ref().on("value", function(snapshot) {
+      // storing the snapshot.val() in a variable for convenience
+      var sv = snapshot.val();
+      
+      // Getting an array of each key In the snapshot object
+      var svArr = Object.keys(sv);
+      // Finding the last user's key
+      var lastIndex = svArr.length - 1;
+      var lastKey = svArr[lastIndex];
+      // Using the last user's key to access the last added user object
+      var lastObj = sv[lastKey]
+      // Console.loging the last user's data
+      console.log(lastObj.name);
+      console.log(lastObj.destination);
+      console.log(lastObj.time);
+      console.log(lastObj.frequency);
+
+
+      // Change the HTML to reflect
+      $("#name-display").html(lastObj.name);
+      $("#destination-display").html(lastObj.destination);
+      $("#time-display").html(lastObj.time);
+      $("#fequency-display").html(lastObj.frequency);
+      // Handle the errors
+    }, function(errorObject) {
+      console.log("Errors handled: " + errorObject.code);
+    });
+  </script>
+</body>
+</html>
